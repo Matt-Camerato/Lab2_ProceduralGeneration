@@ -17,8 +17,9 @@ public static class NoiseGenerator
         Vector2[] octaveOffsets = new Vector2[LevelGenerator.Instance.octaves];
         for(int i = 0; i < LevelGenerator.Instance.octaves; i++)
         {
-            float offsetX = randomSeed.Next(-100000, 100000) + tileOffset.x;
-            float offsetZ = randomSeed.Next(-100000, 100000) + tileOffset.y;
+            float offsetX = randomSeed.Next(-100000, 100000);
+            float offsetZ = randomSeed.Next(-100000, 100000);
+            octaveOffsets[i] = new Vector2(offsetX, offsetZ);
         }
 
         //fields used to find min and max values of noise map
@@ -36,11 +37,11 @@ public static class NoiseGenerator
 
                 for(int i = 0; i < LevelGenerator.Instance.octaves; i++)
                 {
-                    float sampleX = x / scale * frequency;
-                    float sampleZ = z / scale * frequency;
+                    float sampleX = (x + tileOffset.x) / scale * frequency + octaveOffsets[i].x;
+                    float sampleZ = (z + tileOffset.y) / scale * frequency + octaveOffsets[i].y;
 
                     //generate noise height using perlin noise for given wave settings
-                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1;
+                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1; //<---NOTE: check what this does
                     noiseHeight += perlinValue * amplitude;
                     
                     amplitude *= LevelGenerator.Instance.persistance;

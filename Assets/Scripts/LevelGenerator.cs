@@ -13,12 +13,10 @@ public class LevelGenerator : MonoBehaviour
 
     //noise settings shouldn't change once level starts
     [Header("Noise Settings")]
-    [SerializeField] private float noiseScale;
-
-    public int octaves;
-    public float persistance;
-    public float lacunarity;
-
+    public float noiseScale = 1f;
+    public int octaves = 0;
+    [Range(0, 1)] public float persistance;
+    public float lacunarity = 1f;
     public int seed; //seed of level
 
     [Header("References")]
@@ -33,15 +31,38 @@ public class LevelGenerator : MonoBehaviour
 
     public void GenerateLevel()
     {
+        //reset tiles array if not empty
+        if(tiles != null)
+        {
+            foreach(GameObject tile in tiles) Destroy(tile);
+        }
+
+        //initialize 2D array of tiles
+        tiles = new GameObject[levelWidth, levelDepth];
+
+        //get tile dimensions from prefab
+        Vector3 tileSize = tilePrefab.GetComponent<MeshRenderer>().bounds.size;
+        int tileWidth = (int)tileSize.x;
+        int tileDepth = (int)tileSize.z;
+
         //generate tiles based on level width and depth
         for(int x = 0; x < levelWidth; x++)
         {
             for(int z = 0; z < levelDepth; z++)
             {
-                Vector3 tilePos = new Vector3(x, 0, z);
+                Vector3 tilePos = new Vector3(x * tileWidth, 0, z * tileDepth);
                 GameObject newTile = Instantiate(tilePrefab, tilePos, Quaternion.identity);
                 tiles[x, z] = newTile; //save reference to spawned tile
             }
         }
+    }
+
+    private void OnValidate()
+    {
+        //clamps for inspector values
+        if(levelWidth < 1) levelWidth = 1;
+        if(levelDepth < 1) levelDepth = 1;
+        if(octaves < 0) octaves = 0;
+        if(lacunarity < 1f) lacunarity = 1f;
     }
 }

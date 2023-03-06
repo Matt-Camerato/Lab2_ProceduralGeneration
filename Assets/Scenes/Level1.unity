@@ -818,8 +818,8 @@ MonoBehaviour:
   levelWidth: 5
   levelDepth: 5
   noiseScale: 15
-  octaves: 2
-  persistance: 0.534
+  octaves: 3
+  persistance: 0.324
   lacunarity: 1
   seed: 0
   tilePrefab: {fileID: 297831248714889534, guid: d8a48bdcc4e8cdf45868e1846ebdf4ca, type: 3}

@@ -22,47 +22,36 @@ public static class NoiseGenerator
             octaveOffsets[i] = new Vector2(offsetX, offsetZ);
         }
 
-        //fields used to find min and max values of noise map
-        float maxNoiseHeight = float.MinValue;
-        float minNoiseHeight = float.MaxValue;
-
         //generate float values for noise map
         for (int z = 0; z < mapDepth; z++)
         {
             for (int x = 0; x < mapWidth; x++)
             {
-                float amplitude = 1;
-                float frequency = 1;
-                float noiseHeight = 0;
+                float sampleX = (x + tileOffset.x) / scale;
+                float sampleZ = (z + tileOffset.y) / scale;
 
+                float amplitude = 1f;
+                float frequency = 1f;
+                float noiseHeight = 0f;
+                float normalization = 0f;
                 for(int i = 0; i < LevelGenerator.Instance.octaves; i++)
                 {
-                    float sampleX = (x + tileOffset.x) / scale * frequency + octaveOffsets[i].x;
-                    float sampleZ = (z + tileOffset.y) / scale * frequency + octaveOffsets[i].y;
-
-                    //generate noise height using perlin noise for given wave settings
-                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1; //<---NOTE: check what this does
-                    noiseHeight += perlinValue * amplitude;
+                    //generate height using perlin noise for current octave
+                    float perlinValue = Mathf.PerlinNoise(
+                        sampleX * frequency + octaveOffsets[i].x,
+                        sampleZ * frequency + octaveOffsets[i].y);
+                    noiseHeight += amplitude * perlinValue;
+                    normalization += amplitude;
                     
+                    //change amplitude and frequency of next wave using persistance and lacunarity values
                     amplitude *= LevelGenerator.Instance.persistance;
                     frequency *= LevelGenerator.Instance.lacunarity;
                 }
-                //update min and max values of noise map
-                if(noiseHeight > maxNoiseHeight) maxNoiseHeight = noiseHeight;
-                else if(noiseHeight < minNoiseHeight) minNoiseHeight = noiseHeight;
+                //normalize noise value between 0 and 1
+                noiseHeight /= normalization;
                 noiseMap[z, x] = noiseHeight;
             }
         }
-
-        //normalize noise map with min and max values
-        for (int z = 0; z < mapDepth; z++)
-        {
-            for (int x = 0; x < mapWidth; x++)
-            {
-                noiseMap[z, x] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[z, x]);
-            }
-        }
-
         //return noise map
         return noiseMap;
     }

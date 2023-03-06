@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
@@ -12,6 +13,8 @@ public class TileGenerator : MonoBehaviour
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
     private MeshCollider meshCollider;
+
+    private List<Vector3> pointsToDraw = new List<Vector3>();
 
     private void Start()
     {
@@ -41,36 +44,8 @@ public class TileGenerator : MonoBehaviour
         Texture2D texture = GenerateTexture(heightMap);
         meshRenderer.material.mainTexture = texture;
 
+        //update vertices with height map
         UpdateVertices(heightMap);
-    }
-
-    //generate mesh vertices with given heightmap
-    private void UpdateVertices(float[,] heightMap)
-    {
-        int tileDepth = heightMap.GetLength(0);
-        int tileWidth = heightMap.GetLength(1);
-
-        Vector3[] vertices = meshFilter.mesh.vertices;
-
-        //iterate through all the heightMap coordinates, updating the vertex index
-        int vertexIndex = 0;
-        for (int z = 0; z < tileDepth; z++)
-        {
-            for (int x = 0; x < tileWidth; x++)
-            {
-                float height = heightMap[z, x];
-                Vector3 vertex = vertices[vertexIndex];
-                //height = AnimationCurve.EaseInOut(0, 0, 1, 1).Evaluate(height);
-                vertices[vertexIndex] = new Vector3(vertex.x, height, vertex.z);
-                vertexIndex++;
-            }
-        }
-        //update the vertices in the mesh and update its properties
-        meshFilter.mesh.vertices = vertices;
-        meshFilter.mesh.RecalculateBounds();
-        meshFilter.mesh.RecalculateNormals();
-
-        meshCollider.sharedMesh = meshFilter.mesh;
     }
 
     //generate texture with given heightmap
@@ -102,5 +77,50 @@ public class TileGenerator : MonoBehaviour
         texture.Apply();
 
         return texture;
+    }
+
+    //generate mesh vertices with given heightmap
+    private void UpdateVertices(float[,] heightMap)
+    {
+        int tileDepth = heightMap.GetLength(0);
+        int tileWidth = heightMap.GetLength(1);
+
+        Vector3[] vertices = meshFilter.mesh.vertices;
+
+        //iterate through all the heightMap coordinates, updating the vertex index
+        int vertexIndex = 0;
+        for (int z = 0; z < tileDepth; z++)
+        {
+            for (int x = 0; x < tileWidth; x++)
+            {
+                float height = heightMap[z, x];
+                Vector3 vertex = vertices[vertexIndex];
+                //height = AnimationCurve.EaseInOut(0, 0, 1, 1).Evaluate(height);
+                vertices[vertexIndex] = new Vector3(vertex.x, height * 3, vertex.z);
+
+                if(vertexIndex == 0) pointsToDraw.Add(vertices[vertexIndex]);
+                else if(z == tileDepth - 1)
+                {
+                    if(x == 0 || x == tileWidth - 1) pointsToDraw.Add(vertices[vertexIndex]);
+                }
+                else if(z == 0 && x == tileWidth - 1) pointsToDraw.Add(vertices[vertexIndex]);
+
+                vertexIndex++;
+            }
+        }
+        //update the vertices in the mesh and update its properties
+        meshFilter.mesh.vertices = vertices;
+        meshFilter.mesh.RecalculateBounds();
+        meshFilter.mesh.RecalculateNormals();
+
+        meshCollider.sharedMesh = meshFilter.mesh;
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach(Vector3 p in pointsToDraw)
+        {
+            Handles.Label(transform.position + p, p.ToString());
+        }
     }
 }

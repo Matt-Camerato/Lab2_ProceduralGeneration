@@ -8,7 +8,7 @@ public static class TextureGenerator
     {
         //create a new texture and set its pixel colors using color map
         Texture2D texture = new Texture2D(width, depth);
-        texture.filterMode = FilterMode.Point;
+        //texture.filterMode = FilterMode.Point;
         texture.wrapMode = TextureWrapMode.Clamp;
         texture.SetPixels(colorMap);
         texture.Apply();

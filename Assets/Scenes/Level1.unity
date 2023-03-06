@@ -817,11 +817,108 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelWidth: 25
   levelDepth: 25
-  noiseScale: 40
+  noiseScale: 50
   octaves: 5
   persistance: 0.5
-  lacunarity: 1.75
+  lacunarity: 1.5
   seed: 0
+  heightScale: 20
+  heightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.304927
+      value: 0.0012495113
+      inSlope: 0.08464354
+      outSlope: 0.08464354
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.40277308
+      value: 0.035846844
+      inSlope: 0.4175879
+      outSlope: 0.4175879
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.45210645
+      value: 0.07359466
+      inSlope: 0.6051245
+      outSlope: 0.6051245
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.48144227
+      value: 0.09389917
+      inSlope: 0.5968626
+      outSlope: 0.5968626
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5520442
+      value: 0.11668059
+      inSlope: 0.4033272
+      outSlope: 0.7284275
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.28683496
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.64628404
+      value: 0.5600616
+      inSlope: 9.461742
+      outSlope: 9.461742
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.120563
+    - serializedVersion: 3
+      time: 0.65298605
+      value: 0.6797267
+      inSlope: 6.465863
+      outSlope: -0.047873147
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.690071
+      value: 0.7989131
+      inSlope: 1.5290791
+      outSlope: 13.40612
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.13941756
+    - serializedVersion: 3
+      time: 0.761779
+      value: 0.9990072
+      inSlope: 7.3318768
+      outSlope: 0.7276667
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.07713882
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   terrainTypes:
   - name: DeepWater
     height: 0.3

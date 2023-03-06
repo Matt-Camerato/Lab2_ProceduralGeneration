@@ -64,8 +64,9 @@ public class TileGenerator : MonoBehaviour
             {
                 float height = heightMap[z, x];
                 Vector3 vertex = vertices[vertexIndex];
-                //height = AnimationCurve.EaseInOut(0, 0, 1, 1).Evaluate(height);
-                vertices[vertexIndex] = new Vector3(vertex.x, height * 3, vertex.z);
+                height = LevelGenerator.Instance.heightCurve.Evaluate(height);
+                height *= LevelGenerator.Instance.heightScale;
+                vertices[vertexIndex] = new Vector3(vertex.x, height, vertex.z);
                 vertexIndex++;
             }
         }

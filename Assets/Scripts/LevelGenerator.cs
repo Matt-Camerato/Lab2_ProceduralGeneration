@@ -20,6 +20,8 @@ public class LevelGenerator : MonoBehaviour
     public int seed; //seed of level
 
     [Header("Terrain Settings")]
+    public float heightScale = 1f;
+    public AnimationCurve heightCurve;
     public TerrainType[] terrainTypes;
 
     [Header("References")]
@@ -67,6 +69,7 @@ public class LevelGenerator : MonoBehaviour
         if(levelDepth < 1) levelDepth = 1;
         if(octaves < 0) octaves = 0;
         if(lacunarity < 1f) lacunarity = 1f;
+        if(heightScale < 1f) heightScale = 1f;
     }
 
     [System.Serializable]

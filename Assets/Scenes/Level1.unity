@@ -815,13 +815,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a1aac0999860cf4e8686e3760900406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelWidth: 5
-  levelDepth: 5
-  noiseScale: 15
-  octaves: 3
-  persistance: 0.324
-  lacunarity: 1
+  levelWidth: 25
+  levelDepth: 25
+  noiseScale: 40
+  octaves: 5
+  persistance: 0.5
+  lacunarity: 1.75
   seed: 0
+  terrainTypes:
+  - name: DeepWater
+    height: 0.3
+    color: {r: 0, g: 0.33982182, b: 1, a: 1}
+  - name: ShallowWater
+    height: 0.4
+    color: {r: 0.0039215437, g: 0.73784, b: 0.8862745, a: 1}
+  - name: Sand
+    height: 0.45
+    color: {r: 1, g: 0.93532735, b: 0.6179246, a: 1}
+  - name: Grass
+    height: 0.55
+    color: {r: 0, g: 0.5849056, b: 0.11005748, a: 1}
+  - name: LowerMountain
+    height: 0.65
+    color: {r: 0.3490566, g: 0.24593182, b: 0, a: 1}
+  - name: UpperMountain
+    height: 0.7
+    color: {r: 0.23584908, g: 0.16694935, b: 0, a: 1}
+  - name: MountainTop
+    height: 1
+    color: {r: 1, g: 1, b: 1, a: 1}
   tilePrefab: {fileID: 297831248714889534, guid: d8a48bdcc4e8cdf45868e1846ebdf4ca, type: 3}
 --- !u!1 &1358379514
 GameObject:

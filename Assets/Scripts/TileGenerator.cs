@@ -41,42 +41,11 @@ public class TileGenerator : MonoBehaviour
             tileDepth, tileWidth, new Vector2(offsetX, offsetZ));
 
         //generate texture and apply it using height map
-        Texture2D texture = GenerateTexture(heightMap);
+        Texture2D texture = TextureGenerator.TextureFromHeightMap(heightMap);
         meshRenderer.material.mainTexture = texture;
 
         //update vertices with height map
         UpdateVertices(heightMap);
-    }
-
-    //generate texture with given heightmap
-    private Texture2D GenerateTexture(float[,] heightMap)
-    {
-        int tileDepth = heightMap.GetLength(0);
-        int tileWidth = heightMap.GetLength(1);
-
-        Color[] colorMap = new Color[tileDepth * tileWidth];
-        for (int z = 0; z < tileDepth; z++)
-        {
-            for (int x = 0; x < tileWidth; x++)
-            {
-                // transform the 2D map index is an Array index
-                int colorIndex = z * tileDepth + x;
-                float height = heightMap[z, x];
-                //assign shade of grey proportional to the height value
-                colorMap[colorIndex] = Color.Lerp(Color.black, Color.white, height);
-                
-                //TerrainType terrainType = ChooseTerrainType(height);
-                //colorMap[colorIndex] = terrainType.color;
-            }
-        }
-
-        // create a new texture and set its pixel colors
-        Texture2D texture = new Texture2D(tileWidth, tileDepth);
-        texture.wrapMode = TextureWrapMode.Clamp;
-        texture.SetPixels(colorMap);
-        texture.Apply();
-
-        return texture;
     }
 
     //generate mesh vertices with given heightmap
@@ -97,14 +66,6 @@ public class TileGenerator : MonoBehaviour
                 Vector3 vertex = vertices[vertexIndex];
                 //height = AnimationCurve.EaseInOut(0, 0, 1, 1).Evaluate(height);
                 vertices[vertexIndex] = new Vector3(vertex.x, height * 3, vertex.z);
-
-                if(vertexIndex == 0) pointsToDraw.Add(vertices[vertexIndex]);
-                else if(z == tileDepth - 1)
-                {
-                    if(x == 0 || x == tileWidth - 1) pointsToDraw.Add(vertices[vertexIndex]);
-                }
-                else if(z == 0 && x == tileWidth - 1) pointsToDraw.Add(vertices[vertexIndex]);
-
                 vertexIndex++;
             }
         }
@@ -114,13 +75,5 @@ public class TileGenerator : MonoBehaviour
         meshFilter.mesh.RecalculateNormals();
 
         meshCollider.sharedMesh = meshFilter.mesh;
-    }
-
-    private void OnDrawGizmos()
-    {
-        foreach(Vector3 p in pointsToDraw)
-        {
-            Handles.Label(transform.position + p, p.ToString());
-        }
     }
 }

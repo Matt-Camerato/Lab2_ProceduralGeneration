@@ -253,7 +253,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 48936032}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 963194228}
@@ -707,7 +707,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 810523885}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.84, y: 8, z: 1.58}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1175,6 +1175,7 @@ MonoBehaviour:
     height: 1
     color: {r: 1, g: 1, b: 1, a: 1}
   tilePrefab: {fileID: 297831248714889534, guid: d8a48bdcc4e8cdf45868e1846ebdf4ca, type: 3}
+  goalPrefab: {fileID: 4938601937992984440, guid: dc4cde283b20d77438574dd1cfe4a8a0, type: 3}
 --- !u!1 &1358379514
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,6 +26,7 @@ public class LevelGenerator : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private GameObject tilePrefab;
+    [SerializeField] private GameObject goalPrefab;
 
     private GameObject[,] tiles; //2D array of spawned tiles
 
@@ -60,6 +61,9 @@ public class LevelGenerator : MonoBehaviour
                 tiles[x, z] = newTile; //save reference to spawned tile
             }
         }
+
+        //place the goal on the last tile generated, opposite where the player starts
+        Instantiate(goalPrefab, new Vector3((levelWidth - 1) * tileWidth, 5, (levelDepth - 1) * tileDepth), Quaternion.identity);
     }
 
     private void OnValidate()

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
@@ -33,6 +35,9 @@ public class PlayerController : MonoBehaviour
     {
         HandleMovement();
         HandleLooking();
+
+        //reset player if they fall off the map
+        if(transform.position.y < -10) transform.position = new Vector3(0, 5, 0);
     }
 
     private void HandleMovement()
@@ -65,5 +70,20 @@ public class PlayerController : MonoBehaviour
         xRot = Mathf.Clamp(xRot, -lookClamp, lookClamp);
         playerCam.transform.localRotation = Quaternion.Euler(xRot, 0, 0);
         transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //check if player reached the goal in a level
+        if(other.CompareTag("Finish"))
+        {
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            if(currentSceneIndex == SceneManager.sceneCountInBuildSettings - 1)
+            {
+                //if you won last level
+                Debug.Log("YOU WIN");
+            }
+            else SceneManager.LoadScene(currentSceneIndex + 1); //otherwise load next level
+        }
     }
 }

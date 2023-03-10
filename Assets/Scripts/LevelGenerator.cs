@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class LevelGenerator : MonoBehaviour
     public int octaves = 0;
     [Range(0, 1)] public float persistance;
     public float lacunarity = 1f;
-    public int seed; //seed of level
+    public int seed = 0; //seed of level
 
     [Header("Terrain Settings")]
     public float heightScale = 1f;
@@ -27,24 +28,36 @@ public class LevelGenerator : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] private GameObject goalPrefab;
+    [SerializeField] private TMP_InputField seedIF;
 
     private GameObject[,] tiles; //2D array of spawned tiles
+    private GameObject goal; //goal cube
 
-    private void Awake()
+    private bool hasPath = false;
+
+    private void Awake() => Instance = this;
+
+    private void Start()
     {
-        Instance = this;
+        //check if this level has a path in it
+        if(GetComponent<PathGenerator>() != null) hasPath = true;
     }
 
     public void GenerateLevel()
     {
-        //reset tiles array if not empty
-        if(tiles != null)
+        //delete any previous tiles
+        if(tiles != null) foreach(GameObject tile in tiles) Destroy(tile);
+        tiles = new GameObject[levelWidth, levelDepth]; //initialize new 2D array of tiles
+
+        //if path objects exist, delete them
+        if(hasPath && GetComponent<PathGenerator>().pathObjs != null)
         {
-            foreach(GameObject tile in tiles) Destroy(tile);
+            List<GameObject> pathObjs = GetComponent<PathGenerator>().pathObjs;
+            foreach(GameObject path in pathObjs) Destroy(path);
         }
 
-        //initialize 2D array of tiles
-        tiles = new GameObject[levelWidth, levelDepth];
+        //get noise seed from input field if possible
+        if(!string.IsNullOrEmpty(seedIF.text)) seed = int.Parse(seedIF.text);
 
         //get tile dimensions from prefab
         Vector3 tileSize = tilePrefab.GetComponent<MeshRenderer>().bounds.size;
@@ -63,7 +76,28 @@ public class LevelGenerator : MonoBehaviour
         }
 
         //place the goal on the last tile generated, opposite where the player starts
-        Instantiate(goalPrefab, new Vector3((levelWidth - 1) * tileWidth, 5, (levelDepth - 1) * tileDepth), Quaternion.identity);
+        Vector3 goalPos = new Vector3((levelWidth - 1) * tileWidth, 5, (levelDepth - 1) * tileDepth);
+        SpawnGoal(goalPos);
+    }
+
+    public void SpawnGoal(Vector3 pos)
+    {
+        //delete any pre-existing goal
+        if(goal != null) Destroy(goal);
+
+        //spawn new goal cube
+        goal = Instantiate(goalPrefab, pos, Quaternion.identity);
+    }
+
+    public void GeneratePath()
+    {
+        //get tile dimensions from prefab
+        Vector3 tileSize = tilePrefab.GetComponent<MeshRenderer>().bounds.size;
+        int tileWidth = (int)tileSize.x;
+        int tileDepth = (int)tileSize.z;
+
+        //generate path
+        GetComponent<PathGenerator>().GeneratePath(levelWidth, levelDepth, tileWidth, tileDepth);
     }
 
     private void OnValidate()

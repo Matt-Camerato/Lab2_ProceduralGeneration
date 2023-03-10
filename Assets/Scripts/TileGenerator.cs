@@ -14,8 +14,6 @@ public class TileGenerator : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshCollider meshCollider;
 
-    private List<Vector3> pointsToDraw = new List<Vector3>();
-
     private void Start()
     {
         meshRenderer = GetComponent<MeshRenderer>();

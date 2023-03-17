@@ -13,6 +13,12 @@ public class TileGenerator : MonoBehaviour
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
     private MeshCollider meshCollider;
+    
+    [SerializeField] private GameObject safeZonePrefab;
+
+    public float AvgHeight;
+    public float AvgHeightScaled;
+    private GameObject safeZone = null;
 
     private void Start()
     {
@@ -56,23 +62,43 @@ public class TileGenerator : MonoBehaviour
 
         //iterate through all the heightMap coordinates, updating the vertex index
         int vertexIndex = 0;
+        float totalHeight = 0;
+        float totalHeightScaled = 0;
         for (int z = 0; z < tileDepth; z++)
         {
             for (int x = 0; x < tileWidth; x++)
             {
                 float height = heightMap[z, x];
+                totalHeight += height;
                 Vector3 vertex = vertices[vertexIndex];
                 height = LevelGenerator.Instance.heightCurve.Evaluate(height);
                 height *= LevelGenerator.Instance.heightScale;
+                totalHeightScaled += height;
                 vertices[vertexIndex] = new Vector3(vertex.x, height, vertex.z);
                 vertexIndex++;
             }
         }
+
+        //calculate tile's average height (and average height scaled)
+        AvgHeight = totalHeight / vertexIndex;
+        AvgHeightScaled = totalHeightScaled / vertexIndex;
+
         //update the vertices in the mesh and update its properties
         meshFilter.mesh.vertices = vertices;
         meshFilter.mesh.RecalculateBounds();
         meshFilter.mesh.RecalculateNormals();
 
         meshCollider.sharedMesh = meshFilter.mesh;
+    }
+
+    public void SpawnSafeZone()
+    {
+        Vector3 spawnPos = new Vector3(transform.position.x, AvgHeightScaled, transform.position.z);
+        safeZone = Instantiate(safeZonePrefab, spawnPos, Quaternion.identity);
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(safeZone);
     }
 }

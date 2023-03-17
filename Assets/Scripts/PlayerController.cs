@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
+    public bool inSafeZone = false;
+
     [Header("Move Settings")]
     [SerializeField] private float walkSpeed = 6f;
     [SerializeField] private float runSpeed = 15f;
@@ -20,9 +23,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Camera playerCam;
+    [SerializeField] private Image healthBarFill;
 
     private Vector3 moveDir = Vector3.zero;
     private float xRot = 0f;
+    private float health = 100;
+    private float respawnCooldown = 1;
 
     private CharacterController cc;
 
@@ -33,8 +39,22 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
     {
-        HandleMovement();
-        HandleLooking();
+        if(health <= 0)
+        {
+            transform.position = new Vector3(0, 5, 0);
+            if(respawnCooldown > 0) respawnCooldown -= Time.deltaTime;
+            else
+            {
+                respawnCooldown = 1;
+                health = 100;
+                healthBarFill.fillAmount = 1;
+            }
+        }
+        else
+        {
+            HandleMovement();
+            HandleLooking();
+        }
 
         //reset player if they fall off the map
         if(transform.position.y < -10) transform.position = new Vector3(0, 5, 0);
@@ -72,6 +92,12 @@ public class PlayerController : MonoBehaviour
         transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
     }
 
+    private void Damage()
+    {
+        health -= Time.deltaTime * 3;
+        healthBarFill.fillAmount = health / 100;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         //check if player reached the goal in a level
@@ -85,5 +111,10 @@ public class PlayerController : MonoBehaviour
             }
             else SceneManager.LoadScene(currentSceneIndex + 1); //otherwise load next level
         }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.CompareTag("Enemy")) Damage();
     }
 }

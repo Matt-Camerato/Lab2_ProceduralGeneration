@@ -111,3 +111,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offsetX: 0
   offsetZ: 0
+  safeZonePrefab: {fileID: 1144695953278301388, guid: 1e21188aec179214aa205a7efb5c6a40, type: 3}
+  AvgHeight: 0
+  AvgHeightScaled: 0

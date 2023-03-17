@@ -10,7 +10,6 @@ public class LevelGenerator : MonoBehaviour
     [Header("Level Generation Settings")]
     [SerializeField] private int levelWidth = 5;
     [SerializeField] private int levelDepth = 5;
-    //NOTE: 5x5 tiles generate around player (render distance)
 
     //noise settings shouldn't change once level starts
     [Header("Noise Settings")]
@@ -27,6 +26,7 @@ public class LevelGenerator : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private GameObject tilePrefab;
+    [SerializeField] private GameObject safeZonePrefab;
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private TMP_InputField seedIF;
 
@@ -98,6 +98,23 @@ public class LevelGenerator : MonoBehaviour
 
         //generate path
         GetComponent<PathGenerator>().GeneratePath(levelWidth, levelDepth, tileWidth, tileDepth);
+    }
+
+    public void GenerateSafeZones()
+    {
+        foreach(GameObject tile in tiles)
+        {
+            //loop through tiles, only selecting ones that are relatively flat
+            TileGenerator tg = tile.GetComponent<TileGenerator>();
+            if(tg.AvgHeight < 0.5 || tg.AvgHeight > 0.55) continue;
+            if(tg.AvgHeightScaled < 2f || tg.AvgHeightScaled > 2.2f) continue;
+
+            //after checks, only 30% chance a safe zone will spawn
+            if(Random.Range(0f, 1f) > 0.3f) continue;
+
+            //spawn save zone
+            tg.SpawnSafeZone();
+        }
     }
 
     private void OnValidate()

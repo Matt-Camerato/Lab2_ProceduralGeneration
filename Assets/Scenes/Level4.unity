@@ -5740,9 +5740,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a1aac0999860cf4e8686e3760900406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelWidth: 20
-  levelDepth: 20
-  noiseScale: 40
+  levelWidth: 25
+  levelDepth: 25
+  noiseScale: 45
   octaves: 5
   persistance: 0.5
   lacunarity: 1.5
@@ -6051,7 +6051,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &823101286
 SphereCollider:
   m_ObjectHideFlags: 0

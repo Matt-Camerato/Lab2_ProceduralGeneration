@@ -110,7 +110,7 @@ public class LevelGenerator : MonoBehaviour
             if(tg.AvgHeightScaled < 2f || tg.AvgHeightScaled > 2.2f) continue;
 
             //after checks, only 30% chance a safe zone will spawn
-            if(Random.Range(0f, 1f) > 0.3f) continue;
+            if(Random.Range(0f, 1f) > 0.6f) continue;
 
             //spawn save zone
             tg.SpawnSafeZone();

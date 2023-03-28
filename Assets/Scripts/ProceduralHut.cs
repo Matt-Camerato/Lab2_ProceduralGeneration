@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ProceduralHut : MonoBehaviour
 {
-    
+    public System.Random randomSeed;
+
     [Header("Settings")]
     [SerializeField] private float storyHeight = 30.0f;
     
@@ -14,7 +15,7 @@ public class ProceduralHut : MonoBehaviour
     
     private float width;
     private float depth;
-
+    
     private Color woodColor, wallColor, roofColor;
 
     private enum StoryType { Top, Center, Bottom };
@@ -23,30 +24,25 @@ public class ProceduralHut : MonoBehaviour
 
     private void Start()
     {
-        //setup base platform
-        //width = Random.Range(4.5f, 7.5f);
-        //depth = Random.Range(4.5f, 7.5f);
-        //baseTransform.localScale = new Vector3(width, 0.1f, depth);
+        //generate random seed and material colors
+        woodColor = GenerateRandomColor(randomSeed, 0.26f, 0.26f, 0.196f, 0.196f, 0f, 0.15f);
+        wallColor = GenerateRandomColor(randomSeed, 0.3f, 1f, 0.3f, 1f, 0.3f, 1f);
+        roofColor = GenerateRandomColor(randomSeed, 0.3f, 1f, 0.3f, 1f, 0.3f, 1f);
 
-        //35% chance to spawn fences
-        bool spawnFences = (Random.value <= 0.35);
-        if(spawnFences)
-        {
-            //generate wood material color and spawn fences
-            woodColor = Color.HSVToRGB(45, 100, Random.Range(10, 40));
-            SpawnFences();
-        }
+        //35% chance to spawn fences (based on random seed)
+        if((float)randomSeed.NextDouble() <= 0.35f) SpawnFences();
 
         //50% chance to spawn building
-        bool spawnBuilding = (Random.value <= 0.5);
-        if(spawnBuilding)
-        {
-            //generate wood, wall, and roof material colors and spawn building
-            woodColor = new Color(0.26f, 0.196f, Random.Range(0f, 0.15f));
-            wallColor = new Color(Random.Range(0.3f, 1f), Random.Range(0.3f, 1f), Random.Range(0.3f, 1f));
-            roofColor = new Color(Random.Range(0.3f, 1f), Random.Range(0.3f, 1f), Random.Range(0.3f, 1f));
-            SpawnBuilding();
-        }
+        if((float)randomSeed.NextDouble() <= 0.5f) SpawnBuilding();
+    }
+
+    //generates a pseudo-random color based on a given random seed
+    private Color GenerateRandomColor(System.Random randomSeed, float minR, float maxR, float minG, float maxG, float minB, float maxB)
+    {
+        float r = (float)randomSeed.NextDouble() * (maxR - minR) + minR;
+        float g = (float)randomSeed.NextDouble() * (maxG - minG) + minG;
+        float b = (float)randomSeed.NextDouble() * (maxB - minB) + minB;
+        return new Color(r, g, b);
     }
 
     private void SpawnFences()
@@ -60,7 +56,7 @@ public class ProceduralHut : MonoBehaviour
     //spawn building with random amount of stories (between 2 and 5)
     private void SpawnBuilding()
     {
-        numStories = Random.Range(2, 6);
+        numStories = Mathf.RoundToInt((float)randomSeed.NextDouble() * 4 + 2);
         for(int i = 0; i < numStories; i++)
         {
             //calculate center pos of current story
@@ -75,13 +71,12 @@ public class ProceduralHut : MonoBehaviour
             //spawn walls and possibly spawn roof
             SpawnWalls(pos, type);
             bool spawnRoof = (i == numStories - 1); //spawn a roof if this is the top floor
-            if(Random.value <= 0.35f) spawnRoof = true; //35% chance to spawn a roof without being top floor
+            if((float)randomSeed.NextDouble() <= 0.35f) spawnRoof = true; //35% chance to spawn a roof without being top floor
             if(spawnRoof)
             {
                 Vector3 roofPos = pos + startPos;
                 SpawnRoof(roofPos);
             }
-            
         }
     }
 

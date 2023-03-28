@@ -6051,7 +6051,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!135 &823101286
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -6077,7 +6077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28faaaa4a0bc3b345bc0f8559ed93911, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 6
   playerTransform: {fileID: 2041227345}
 --- !u!4 &823101288
 Transform:

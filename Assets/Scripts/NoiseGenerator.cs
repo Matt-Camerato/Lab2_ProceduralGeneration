@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class NoiseGenerator
@@ -9,17 +7,34 @@ public static class NoiseGenerator
         //initialize float array for noise map
         float[,] noiseMap = new float[mapDepth, mapWidth];
 
-        //minimum noise scale is 0.001f
-        float scale = Mathf.Max(LevelGenerator.Instance.noiseScale, 0.001f);
+        float scale;
+        System.Random randomSeed;
+        Vector2[] octaveOffsets;
 
-        //use level seed to calculate octave offsets for noise map generation
-        System.Random randomSeed = new System.Random(LevelGenerator.Instance.seed);
-        Vector2[] octaveOffsets = new Vector2[LevelGenerator.Instance.octaves];
-        for(int i = 0; i < LevelGenerator.Instance.octaves; i++)
+        //get noise scale and use level seed to calculate octave offsets for noise map generation
+        if(LevelGenerator.Instance != null) //if first four levels with regular level generator
         {
-            float offsetX = randomSeed.Next(-100000, 100000);
-            float offsetZ = randomSeed.Next(-100000, 100000);
-            octaveOffsets[i] = new Vector2(offsetX, offsetZ);
+            scale = LevelGenerator.Instance.noiseScale;
+            randomSeed = new System.Random(LevelGenerator.Instance.seed);
+            octaveOffsets = new Vector2[LevelGenerator.Instance.octaves];
+            for(int i = 0; i < LevelGenerator.Instance.octaves; i++)
+            {
+                float offsetX = randomSeed.Next(-100000, 100000);
+                float offsetZ = randomSeed.Next(-100000, 100000);
+                octaveOffsets[i] = new Vector2(offsetX, offsetZ);
+            }
+        }
+        else //else use level 5's infinite level generator
+        {
+            scale = InfiniteLevelGenerator.Instance.noiseScale;
+            randomSeed = new System.Random(InfiniteLevelGenerator.Instance.seed);
+            octaveOffsets = new Vector2[InfiniteLevelGenerator.Instance.octaves];
+            for(int i = 0; i < InfiniteLevelGenerator.Instance.octaves; i++)
+            {
+                float offsetX = randomSeed.Next(-100000, 100000);
+                float offsetZ = randomSeed.Next(-100000, 100000);
+                octaveOffsets[i] = new Vector2(offsetX, offsetZ);
+            }
         }
 
         //generate float values for noise map
@@ -34,7 +49,10 @@ public static class NoiseGenerator
                 float frequency = 1f;
                 float noiseHeight = 0f;
                 float normalization = 0f;
-                for(int i = 0; i < LevelGenerator.Instance.octaves; i++)
+                
+                int numOctaves = (LevelGenerator.Instance != null)?
+                    LevelGenerator.Instance.octaves : InfiniteLevelGenerator.Instance.octaves;
+                for(int i = 0; i < numOctaves; i++)
                 {
                     //generate height using perlin noise for current octave
                     float perlinValue = Mathf.PerlinNoise(
@@ -44,8 +62,8 @@ public static class NoiseGenerator
                     normalization += amplitude;
                     
                     //change amplitude and frequency of next wave using persistance and lacunarity values
-                    amplitude *= LevelGenerator.Instance.persistance;
-                    frequency *= LevelGenerator.Instance.lacunarity;
+                    amplitude *= (LevelGenerator.Instance != null)? LevelGenerator.Instance.persistance : InfiniteLevelGenerator.Instance.persistance;
+                    frequency *= (LevelGenerator.Instance != null)? LevelGenerator.Instance.lacunarity : InfiniteLevelGenerator.Instance.lacunarity;
                 }
                 //normalize noise value between 0 and 1
                 noiseHeight /= normalization;

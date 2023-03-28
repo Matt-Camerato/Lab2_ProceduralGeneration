@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class TextureGenerator
@@ -26,12 +24,27 @@ public static class TextureGenerator
             for (int x = 0; x < tileWidth; x++)
             {
                 float height = heightMap[z, x]; //height value between 0 and 1
-                foreach(LevelGenerator.TerrainType terrainType in LevelGenerator.Instance.terrainTypes)
+
+                //if first 4 levels, use regular level generator
+                if(LevelGenerator.Instance != null)
                 {
-                    if(height > terrainType.height) continue; //loop until terrain type is found
-                    colorMap[z * tileDepth + x] = terrainType.color; //set appropriate color based on terrain type
-                    break;
+                    foreach(LevelGenerator.TerrainType terrainType in LevelGenerator.Instance.terrainTypes)
+                    {
+                        if(height > terrainType.height) continue; //loop until terrain type is found
+                        colorMap[z * tileDepth + x] = terrainType.color; //set appropriate color based on terrain type
+                        break;
+                    }
                 }
+                else //otherwise use level 5's inifinite level generator
+                {
+                    foreach(InfiniteLevelGenerator.TerrainType terrainType in InfiniteLevelGenerator.Instance.terrainTypes)
+                    {
+                        if(height > terrainType.height) continue; //loop until terrain type is found
+                        colorMap[z * tileDepth + x] = terrainType.color; //set appropriate color based on terrain type
+                        break;
+                    }
+                }
+                
             }
         }
         return TextureFromColorMap(tileWidth, tileDepth, colorMap);

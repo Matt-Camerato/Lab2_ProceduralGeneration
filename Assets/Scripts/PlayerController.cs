@@ -54,6 +54,9 @@ public class PlayerController : MonoBehaviour
         {
             HandleMovement();
             HandleLooking();
+
+            //heal player if in a safe zone
+            if(inSafeZone) Heal();
         }
 
         //reset player if they fall off the map
@@ -94,7 +97,14 @@ public class PlayerController : MonoBehaviour
 
     private void Damage()
     {
-        health -= Time.deltaTime * 3;
+        health -= Time.deltaTime * 5;
+        healthBarFill.fillAmount = health / 100;
+    }
+
+    private void Heal()
+    {
+        if(health >= 100) health = 100;
+        else health += Time.deltaTime * 2;
         healthBarFill.fillAmount = health / 100;
     }
 
@@ -111,10 +121,16 @@ public class PlayerController : MonoBehaviour
             }
             else SceneManager.LoadScene(currentSceneIndex + 1); //otherwise load next level
         }
+        else if(other.CompareTag("SafeZone")) inSafeZone = true;
     }
 
     private void OnTriggerStay(Collider other)
     {
         if(other.CompareTag("Enemy")) Damage();
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag("SafeZone")) inSafeZone = false;
     }
 }
